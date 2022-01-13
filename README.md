@@ -1,2 +1,2 @@
-# Quest_dealer
-Quest dealer for communities in Discord
+# Quest_Giver
+Quest giver for communities in Discord
