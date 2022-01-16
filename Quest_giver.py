@@ -1,4 +1,3 @@
-from importlib.resources import read_binary
 import discord
 import os
 from jira import JIRA
@@ -65,7 +64,7 @@ print(differece)
 
 
 #Запуск бота
-client.run(dict_authorization['DISCORD_TOKEN'])
+client.run(discord_token)
 
 
 
