@@ -3,15 +3,22 @@ import discord
 import os
 from jira import JIRA
 import json
+from os import getenv
+from dotenv import load_dotenv
 
 #Authorization
 with open('authorization.json') as f:
     dict_authorization = json.loads(f.read())
 
+#Heroku authorization
+jira_token = getenv('API_TOKEN_JIRA')
+jira_username = getenv('USERNAME_JIRA')
+discord_token = getenv('DISCORD_TOKEN')
+
 #Подключение к нашей Jira
 jira_host='https://quest-giver.atlassian.net'
-auth_jira = JIRA(jira_host, basic_auth=(dict_authorization['username'], dict_authorization['api_token']))
-jql_string='project = QG order by created DESC'
+auth_jira = JIRA(jira_host, basic_auth=(jira_username, jira_token))
+jql_string ='project = QG order by created DESC'
 jira_list_raw = auth_jira.search_issues(jql_string)
 
 #Создание словаря
@@ -51,14 +58,14 @@ def read_db():
         return json.loads(f.read())
 #print(read_db())
 
-#Compare. find new tasks
+#Compare. Find new tasks
 differece = set(jira_list.keys()) - set(read_db().keys())
 print(differece)
 
 
 
 #Запуск бота
-client.run(dict_authorization['TOKEN'])
+client.run(dict_authorization['DISCORD_TOKEN'])
 
 
 
