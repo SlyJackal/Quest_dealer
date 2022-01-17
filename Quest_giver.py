@@ -115,7 +115,7 @@ async def on_message(message):
 
 new_tasks()
 #Launch bot
-#client.run(discord_token)
+client.run(discord_token)
 
 
 
