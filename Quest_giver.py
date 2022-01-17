@@ -1,5 +1,3 @@
-from calendar import different_locale
-from email import message
 import discord
 import os
 from jira import JIRA
@@ -30,16 +28,11 @@ auth_jira = JIRA(jira_host, basic_auth=(jira_username, jira_token))
 jql_string ='project = QG order by created DESC'
 jira_list_raw = auth_jira.search_issues(jql_string)
 
-#Create issues list from Jira
-# jira_list = []
-# for issue in jira_list_raw:
-#     list_issue = [str(issue), issue.fields.status.name, issue.fields.summary]
-#     jira_list.append(list_issue)
-
+#Create Jira Dictionary
 dict_jira = {}
 for issue in jira_list_raw:
     dict_jira[str(issue)] = [issue.fields.status.name, issue.fields.summary]
-print(dict_jira)
+print('словарь Jira', dict_jira)
 
 #Подключение к Discord
 client = discord.Client()
@@ -69,7 +62,7 @@ def read_db():
         dict_db[issue[0]] = [issue[1], issue[2]]
     return dict_db
 dict_db_save = read_db()
-print(read_db())
+print('задачи из бд', read_db())
 
 #Difference keys. Find new tasks.
 def diff_keys():
@@ -77,7 +70,15 @@ def diff_keys():
     keys_jira = list(dict_jira.keys())
     difference = [x for x in keys_db + keys_jira if x not in keys_db]
     return difference
-print(diff_keys())
+print('различные ключи', diff_keys())
+
+def new_tasks():
+    jql_new_quest ='project = "QG" AND status = "Created" ORDER BY created DESC'
+    jira_new_tasks = auth_jira.search_issues(jql_new_quest)
+    return jira_new_tasks
+#     for task in dict_jira:
+#         diff_keys() = dict_jira.keys()
+#         summary = 
 
 #Changed status.
 def change_status():
@@ -88,11 +89,9 @@ def change_status():
     return announce_dict
 
 
-
-print(change_status())
-  
 #print(change_status())
-
+print('задача + новый статус', change_status())
+  
 
 @client.event
 async def on_message(message):
@@ -101,14 +100,20 @@ async def on_message(message):
     #Message
     if message.content.startswith('hello'):
         await message.channel.send('Hello, world!')
+    if message.content.startswith('Привет!'):
+        await message.channel.send('Привет, Антон и Ксения!')   
+    if message.content.startswith('check'):
+       await  message.channel.send('У задачи новый статус!')
+       await  message.channel.send(change_status())
+       await  message.channel.send('присоединяйтесь к приключению и решению задачи!')
+    if message.content.startswith('new'):
+       await  message.channel.send('Объявлен новый квест!')
+       await  message.channel.send(new_tasks())
+       await  message.channel.send('Станьте героем кто его выполнит или соберите комнаду и преодолейте испытание!')    
 
 
 
-
-
-
-
-
+new_tasks()
 #Launch bot
 #client.run(discord_token)
 
