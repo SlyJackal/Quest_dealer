@@ -44,11 +44,21 @@ async def on_ready():
 
 #Write DB
 def write_db():
-    cur.execute ("""
+    cur.execute("""
     INSERT INTO public.jira_tasks (key, status, summary) VALUES
     ('QG-4', 'Working', 'Работа пример');
     """)
     conn.commit()
+
+#choose task from
+def random_sql_task():
+    cur.execute("""
+    select task, description from sql_task order by random() limit 1;
+    """)
+    sql_task = cur.fetchall()
+    return sql_task
+
+print(random_sql_task())
 
 #Read DB
 def read_db():
@@ -99,9 +109,7 @@ async def on_message(message):
         return
     #Message
     if message.content.startswith('hello'):
-        await message.channel.send('Hello, world!')
-    if message.content.startswith('Привет!'):
-        await message.channel.send('Привет, Антон и Ксения!')   
+        await message.channel.send('Hello, world! Мои команды: check, new, sql')
     if message.content.startswith('check'):
        await  message.channel.send('У задачи новый статус!')
        await  message.channel.send(change_status())
@@ -110,12 +118,13 @@ async def on_message(message):
        await  message.channel.send('Объявлен новый квест!')
        await  message.channel.send(new_tasks())
        await  message.channel.send('Станьте героем кто его выполнит или соберите комнаду и преодолейте испытание!')    
-
+    if message.content.startswith('sql'):
+       await  message.channel.send(random_sql_task())
 
 
 new_tasks()
 #Launch bot
-client.run(discord_token)
+#client.run(discord_token)
 
 
 
